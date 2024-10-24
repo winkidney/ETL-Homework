@@ -3233,4 +3233,4 @@ reference = "tuna"
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.9"
-content-hash = "8ebfbf6d09d6e8c9ad8842695323279acef3f433b6ca55c41eea47a1133ffa5b"
+content-hash = "aa536ee2be42e6732b2cded722440e10b7ab5babb65988194a77fed64f5159e9"
