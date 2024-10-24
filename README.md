@@ -1,6 +1,6 @@
 # ETL-Homework
 
-![main branch build status](https://github.com/winkidney/ETL-Homework/actions/workflows/py-test.yml/badge.svg)
+![Tests Status](https://github.com/winkidney/ETL-Homework/actions/workflows/py-tests.yml/badge.svg)
 
 # Development
 
