@@ -1,5 +1,7 @@
 # ETL-Homework
 
+![main branch build status](https://github.com/winkidney/ETL-Homework/actions/workflows/py-test.yml/badge.svg)
+
 # Development
 
 Install requires:
