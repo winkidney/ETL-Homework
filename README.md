@@ -28,3 +28,14 @@ make switch2cloud
 # then run task-entry
 make local-task
 ```
+
+# Deploy
+Now we only use local process to serve `depolyment` instance since we have limited calculation and data fetching.
+
+just run:
+
+```shell
+make local-task
+```
+
+It will make the deployment done.
