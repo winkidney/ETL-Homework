@@ -1,5 +1,5 @@
 from etl_homework import flows
 
 
-def test_helloworld(prefect_test_server):
+def test_hello_world():
     assert flows.hello_world() == 0
