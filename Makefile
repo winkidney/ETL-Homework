@@ -5,7 +5,7 @@ switch2local:
 switch2cloud:
 	poetry run prefect cloud login
 local-task:
-	poetry run python -m etl_homework
+	poetry run python -m etl_homework.serve
 test:
 	poetry run pytest tests -vv
 lint:
