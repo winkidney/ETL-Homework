@@ -8,14 +8,21 @@ Install requires:
 pip install poetry
 # install env
 poetry install
-```
 
-Run:
-```shell
-make serve
+# copy git hook
+cp ./scripts/pre-commit.example ./git/hooks/pre-commit
 ```
 
 Test:
 ```shell
 make test
+```
+
+Run on cloud:
+```shell
+# switch to cloud and login with API-KEY or browser
+# note: you should first register an account at https://www.prefect.io/
+make switch2cloud
+# then run task-entry
+make local-task
 ```

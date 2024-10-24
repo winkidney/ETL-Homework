@@ -8,7 +8,7 @@ import subprocess
 import requests
 
 
-@pytest.fixture(scope='session')
+@pytest.fixture(scope="session")
 def prefect_test_server(request):
     process = subprocess.Popen(
         ["make", "serve-api"],

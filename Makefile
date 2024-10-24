@@ -8,3 +8,7 @@ local-task:
 	poetry run python -m etl_homework
 test:
 	poetry run pytest tests -vv
+lint:
+	poetry run black --check --diff .
+format:
+	poetry run black .
