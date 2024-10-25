@@ -137,7 +137,7 @@ class MemPoolAPICrawler:
         # TODO(winkidney): implementation
         return difficulty
 
-    def get_historic_hash_rate(self, period: str = HashRatePeriod.ONE_MINUTE) -> float:
+    def get_historic_hash_rate(self, period: str = HashRatePeriod.ONE_MINUTE):
         difficulity = self._get_hashrate(period)
         self.normalize_difficulty(difficulity)
         return difficulity
