@@ -51,7 +51,7 @@ class BinanceAPICrawler:
 
     def __init__(self):
         config = {}
-        if os.environ["HTTP_PROXY"]:
+        if "HTTP_PROXY" in os.environ:
             config["proxies"] = {
                 "http": os.environ["HTTP_PROXY"],
                 "https": os.environ["HTTPS_PROXY"],
