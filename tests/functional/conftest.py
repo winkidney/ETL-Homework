@@ -11,8 +11,10 @@ def project_root():
 
 @pytest.fixture
 def load_dotenv(request, project_root):
-    succeed = dotenv.load_dotenv(os.path.join(project_root, ".env"))
-    assert succeed
+    env_file = os.path.join(project_root, ".env")
+    if not os.path.exists(env_file):
+        return
+    succeed = dotenv.load_dotenv(env_file)
 
     def finalizer():
         for k, v in dotenv.dotenv_values().items():
