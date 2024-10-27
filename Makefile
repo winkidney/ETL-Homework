@@ -1,3 +1,5 @@
+sync-db:
+	poetry run python -m etl_homework.migrations.initial_data
 serve-api:
 	poetry run prefect server start
 switch2local:
@@ -6,8 +8,13 @@ switch2cloud:
 	poetry run prefect cloud login
 local-task:
 	poetry run python -m etl_homework.serve
+functional-test:
+	poetry run pytest tests/functional -vv
+unittest:
+	poetry run pytest tests/unittest -vv
 test:
-	poetry run pytest tests -vv
+	make unittest
+	make functional-test
 lint:
 	poetry run black --check --diff .
 format:

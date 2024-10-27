@@ -1,3 +1,9 @@
+# database
+*.sqlite
+
+# dotenv
+.env
+
 # I have no idea
 .idea
 

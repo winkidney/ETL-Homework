@@ -11,11 +11,14 @@ package-mode = false
 python = "^3.9"
 prefect = "^3.0.10"
 requests = "^2.32.3"
+ccxt = "^4.4.23"
+peewee = "^3.17.7"
 
 [tool.poetry.group.dev.dependencies]
 pytest = "^8.3.3"
 flake8 = "^7.1.1"
 black = "^24.10.0"
+python-dotenv = "^1.0.1"
 
 [[tool.poetry.source]]
 name = "tuna"
