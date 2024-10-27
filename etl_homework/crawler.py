@@ -3,10 +3,12 @@ import os
 import time
 from urllib.parse import urljoin
 
+import dotenv
 import requests
 import ccxt
 
 from etl_homework.utils.time import get_last_recent_n_minutes_timestamp
+from tests.functional.conftest import load_dotenv
 
 
 class RequestFailed(ValueError):
@@ -49,12 +51,15 @@ class BinanceAPICrawler:
     _s = requests.session()
     _base_url = "https://api.binance.com"
 
-    def __init__(self):
+    def __init__(self, logger: logging.Logger = None):
+        self._logger = logger or logging.getLogger(__name__)
+        # load dotenv in working directory
+        dotenv.load_dotenv()
         config = {}
-        if "HTTP_PROXY" in os.environ:
+        if "ETL_HTTP_PROXY" in os.environ:
             config["proxies"] = {
-                "http": os.environ["HTTP_PROXY"],
-                "https": os.environ["HTTPS_PROXY"],
+                "http": os.environ["ETL_HTTP_PROXY"],
+                "https": os.environ["ETL_HTTPS_PROXY"],
             }
         self._ex = ccxt.binance(config)
 
