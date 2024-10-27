@@ -8,7 +8,6 @@ import requests
 import ccxt
 
 from etl_homework.utils.time import get_last_recent_n_minutes_timestamp
-from tests.functional.conftest import load_dotenv
 
 
 class RequestFailed(ValueError):
