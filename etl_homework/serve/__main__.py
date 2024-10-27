@@ -12,7 +12,7 @@ def start_in_production():
             name="hello-world",
             cron="* * * * *",
         ),
-        flows.flow_update_coin_price.to_deployment(
+        flows.flow_update_btc_network_stats_and_price.to_deployment(
             name="update-coin-price",
             cron="* * * * *",
         ),

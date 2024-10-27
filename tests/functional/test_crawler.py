@@ -39,6 +39,6 @@ class TestMemPoolCrawler:
         assert len(historic_difficulty[0]) == 4, historic_difficulty
 
     def test_should_return_current_hash_rate_and_difficulty(self, mempool_client):
-        hash_rate, difficulty = mempool_client.get_current_hash_rate()
+        hash_rate, difficulty = mempool_client.get_current_hash_rate_difficulty()
         assert isinstance(hash_rate, int), hash_rate
         assert isinstance(difficulty, float), difficulty

@@ -176,7 +176,7 @@ class MemPoolAPICrawler:
         raw_difficulty_data = self._get_historic_difficulty(period)
         return self.normalize_difficulty_history(raw_difficulty_data)
 
-    def get_current_hash_rate(self):
+    def get_current_hash_rate_difficulty(self):
         raw_difficulty_data = self._get_hash_rate(MemPoolPeriod.ONE_MONTH)
         hash_rate = raw_difficulty_data["currentHashrate"]
         difficulty = raw_difficulty_data["currentDifficulty"]
