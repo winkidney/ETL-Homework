@@ -27,7 +27,7 @@ def task_fetch_current_coin_price(coin: str, currency: str):
     price_column = models.CoinPrice(
         coin=coin,
         currency=currency,
-        timestamp=recent_price[0],
+        start_timestamp=recent_price[0],
         price=recent_price[1],
         timeframe=TimeFrames.FIVE_MINUTES,
     )

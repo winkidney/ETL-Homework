@@ -17,8 +17,13 @@ def mempool_client():
 
 class TestBinanceCrawler:
 
-    @pytest.mark.xfail(reason="binance may fail in US area")
-    def test_should_return_historic_btc_prices(self, biannce_client):
+    def test_should_return_historic_btc_prices(
+        self, biannce_client, request, load_dotenv
+    ):
+        if not load_dotenv:
+            mark = pytest.mark.xfail(reason="binance may not used in US area")
+            request.node.add_marker(mark)
+
         historical_prices = biannce_client.get_historic_price(limit=10)
         for ts, price in historical_prices:
             print(
