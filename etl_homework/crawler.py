@@ -25,11 +25,11 @@ class TimeFrames:
         return cls._str2minutes[minutes]
 
 
-class HashRatePeriod:
-    ONE_MINUTE = "1m"
+class MemPoolPeriod:
+    ONE_MONTH = "1m"
 
     _str2minutes = {
-        "1m": 1,
+        "1m": 60 * 24 * 30,
     }
 
     @classmethod
@@ -114,13 +114,13 @@ class MemPoolAPICrawler:
     def _get_url(self, path: str) -> str:
         return urljoin(self._base_url, path)
 
-    def _get_hashrate(self, period: str) -> dict:
+    def _get_hash_rate(self, period: str) -> dict:
         """
         Ref: https://mempool.space/docs/api/rest#get-hashrate
         :param period: 1m, 3m, 6m, 1y, 2y, 3y
-        :return: hash rate with periods
+        :return: hash rate in given periods
         """
-        if not HashRatePeriod.is_valid(period):
+        if not MemPoolPeriod.is_valid(period):
             raise ValueError(f"invalid period: {period}")
 
         path = f"/api/v1/mining/hashrate/{period}"
@@ -133,11 +133,47 @@ class MemPoolAPICrawler:
             raise RequestFailed(error_msg)
         return resp.json()
 
-    def normalize_difficulty(self, difficulty: list) -> list:
+    def _get_historic_difficulty(self, period: str = MemPoolPeriod.ONE_MONTH) -> list:
+        """
+        Ref: https://mempool.space/docs/api/rest#get-difficulty-adjustments
+        :param period: 1m, 3m, 6m, 1y, 2y, 3y
+        :return: difficulty in given periods
+        """
+        if not MemPoolPeriod.is_valid(period):
+            raise ValueError(f"invalid period: {period}")
+
+        path = f"/api/v1/mining/difficulty-adjustments/{period}"
+        url = self._get_url(path)
+
+        resp = self._s.get(url)
+        if resp.status_code != 200:
+            error_msg = f"failed to fetch: url='{url}'"
+            self._logger.error(error_msg)
+            raise RequestFailed(error_msg)
+        return resp.json()
+
+    def normalize_hash_rate_history(cls, hash_rates: list) -> list:
+        # TODO(winkidney): use other data source instead of interpolating data ourselves
+        # TODO(winkidney): implementation
+        return hash_rates
+
+    @classmethod
+    def normalize_difficulty_history(cls, difficulty: list) -> list:
+        # TODO(winkidney): use other data source instead of interpolating data ourselves
         # TODO(winkidney): implementation
         return difficulty
 
-    def get_historic_hash_rate(self, period: str = HashRatePeriod.ONE_MINUTE):
-        difficulity = self._get_hashrate(period)
-        self.normalize_difficulty(difficulity)
-        return difficulity
+    def get_historic_hash_rate(self, period: str = MemPoolPeriod.ONE_MONTH):
+        raw_hash_rate_data = self._get_hash_rate(period)
+        hash_rate_history = raw_hash_rate_data["hashrates"]
+        return self.normalize_hash_rate_history(hash_rate_history)
+
+    def get_historic_difficulty(self, period: str = MemPoolPeriod.ONE_MONTH):
+        raw_difficulty_data = self._get_historic_difficulty(period)
+        return self.normalize_difficulty_history(raw_difficulty_data)
+
+    def get_current_hash_rate(self):
+        raw_difficulty_data = self._get_hash_rate(MemPoolPeriod.ONE_MONTH)
+        hash_rate = raw_difficulty_data["currentHashrate"]
+        difficulty = raw_difficulty_data["currentDifficulty"]
+        return hash_rate, difficulty
