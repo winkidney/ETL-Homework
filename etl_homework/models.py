@@ -6,7 +6,7 @@ from etl_homework import dbs
 
 class TimeSeries(Model):
     timeframe = CharField(max_length=32, default="5m")
-    start_timestamp = TimestampField(index=True)
+    start_timestamp = TimestampField(index=True, resolution=1)  # second as resolution
 
 
 class TimeSeriesMetaClass:
@@ -24,7 +24,7 @@ class NetworkDifficulty(TimeSeries):
         database = dbs.crawler_db_proxy
 
 
-class NetworkHasRate(TimeSeries):
+class NetworkHashRate(TimeSeries):
     network = CharField(default="BTC")
 
     class Meta(TimeSeriesMetaClass):

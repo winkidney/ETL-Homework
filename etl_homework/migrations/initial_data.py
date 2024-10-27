@@ -1,8 +1,8 @@
 from etl_homework import dbs
 from etl_homework import models
-from etl_homework.models import NetworkHasRate, CoinPrice, GeneratedData
+from etl_homework.models import NetworkHashRate, CoinPrice, GeneratedData
 
-CRAWLER_TABLES = [models.NetworkDifficulty, NetworkHasRate, CoinPrice]
+CRAWLER_TABLES = [models.NetworkDifficulty, NetworkHashRate, CoinPrice]
 GENERATED_DATA_TABLES = [GeneratedData]
 
 

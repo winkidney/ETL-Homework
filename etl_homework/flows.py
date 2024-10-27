@@ -5,6 +5,7 @@ from prefect.transactions import transaction
 
 from etl_homework.crawler import BinanceAPICrawler, MemPoolAPICrawler, TimeFrames
 from etl_homework import models, dbs
+from etl_homework.dbs import with_db
 from etl_homework.utils.time import get_last_recent_n_minutes_timestamp
 
 
@@ -39,28 +40,34 @@ def task_fetch_current_coin_price(coin: str, currency: str):
     task_run_name="get-btc-hash-rate-and-difficulty",
 )
 def task_fetch_current_btc_network_hash_rate_and_difficulty():
-    client = MemPoolAPICrawler(get_run_logger())
+    logger = get_run_logger()
+    client = MemPoolAPICrawler(logger)
     hash_rate, difficulty = client.get_current_hash_rate_difficulty()
     recent_timestamp = get_last_recent_n_minutes_timestamp(int(time.time()), minutes=5)
     with dbs.crawler_db_proxy.atomic():
         nd = models.NetworkDifficulty(
             network="BTC",
-            timestamp=recent_timestamp,
+            start_timestamp=recent_timestamp,
             timeframe=TimeFrames.FIVE_MINUTES,
             difficulty=difficulty,
         )
-        nhr = models.NetworkHasRate(
+        nhr = models.NetworkHashRate(
             network="BTC",
-            timestamp=recent_timestamp,
+            start_timestamp=recent_timestamp,
             timeframe=TimeFrames.FIVE_MINUTES,
             hash_rate=hash_rate,
         )
         nd.save()
         nhr.save()
+    logger.warning(
+        f"\nHashRate:   ts={nhr.start_timestamp}, value={nhr.hash_rate}"
+        + f"\nDifficulty: ts={nd.start_timestamp}, value={nd.difficulty}"
+    )
     return nd, nhr
 
 
 @flow(log_prints=True, retries=10, retry_delay_seconds=5)
+@with_db
 def flow_update_btc_network_stats_and_price():
     task_fetch_current_btc_network_hash_rate_and_difficulty()
     task_fetch_current_coin_price(coin="BTC", currency="USD")
