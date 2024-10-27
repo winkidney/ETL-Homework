@@ -28,6 +28,15 @@ def test_btc_network_stats_update(prefect_unittest_conf):
     nd, nhr = flows.task_fetch_current_btc_network_hash_rate_and_difficulty()
     assert nd.id is not None, nd
     assert nhr.id is not None, nhr
-    assert time.time() > nd.start_timestamp > 0, nd.start_timestamp
+    nd = (
+        models.NetworkDifficulty.select()
+        .where(models.NetworkDifficulty.id == nd.id)
+        .get()
+    )
+    nhr = (
+        models.NetworkHashRate.select().where(models.NetworkHashRate.id == nhr.id).get()
+    )
+    assert time.time() > nd.start_timestamp.timestamp() > 0, nd.start_timestamp
+    assert time.time() > nhr.start_timestamp.timestamp() > 0, nd.start_timestamp
     assert nd.difficulty > 0, nd.difficulty
     assert nhr.hash_rate > 0, nhr.hash_rate

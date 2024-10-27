@@ -26,6 +26,7 @@ class NetworkDifficulty(TimeSeries):
 
 class NetworkHashRate(TimeSeries):
     network = CharField(default="BTC")
+    hash_rate = FloatField()
 
     class Meta(TimeSeriesMetaClass):
         database = dbs.crawler_db_proxy
