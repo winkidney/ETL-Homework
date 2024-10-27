@@ -2035,6 +2035,21 @@ url = "https://mirrors.tuna.tsinghua.edu.cn/pypi/web/simple"
 reference = "tuna"
 
 [[package]]
+name = "peewee"
+version = "3.17.7"
+description = "a little orm"
+optional = false
+python-versions = "*"
+files = [
+    {file = "peewee-3.17.7.tar.gz", hash = "sha256:6aefc700bd530fc6ac23fa19c9c5b47041751d92985b799169c8e318e97eabaa"},
+]
+
+[package.source]
+type = "legacy"
+url = "https://mirrors.tuna.tsinghua.edu.cn/pypi/web/simple"
+reference = "tuna"
+
+[[package]]
 name = "pendulum"
 version = "3.0.0"
 description = "Python datetimes made easy"
@@ -4115,4 +4130,4 @@ reference = "tuna"
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.9"
-content-hash = "03283c8b9c0f2b40c82ab2fc84e181e0aebdde75fa12cf3b89b5b585cc1e0da0"
+content-hash = "e4bf6ceba467e72f510a0b38abab75f5546c83bf2de651d6c7e65ae625306c97"

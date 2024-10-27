@@ -1,3 +1,5 @@
+sync-db:
+	poetry run python -m etl_homework.migrations.initial_data
 serve-api:
 	poetry run prefect server start
 switch2local:
