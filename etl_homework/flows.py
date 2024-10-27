@@ -59,7 +59,7 @@ def task_fetch_current_btc_network_hash_rate_and_difficulty():
         )
         nd.save()
         nhr.save()
-    logger.warning(
+    logger.info(
         f"\nHashRate:   ts={nhr.start_timestamp}, value={nhr.hash_rate}"
         + f"\nDifficulty: ts={nd.start_timestamp}, value={nd.difficulty}"
     )
