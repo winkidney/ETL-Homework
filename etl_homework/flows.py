@@ -113,7 +113,7 @@ def task_send_csv_report(csv_report: str):
     dotenv.load_dotenv()
     logger = get_run_logger()
 
-    email_server_credentials = EmailServerCredentials.load("kidney-gmail-sender")
+    email_server_credentials = EmailServerCredentials.load("etl-gmail-sender")
     target_emails = os.environ.get("REPORT_EMAIL_TARGETS")
 
     if not target_emails:

@@ -21,3 +21,11 @@ lint:
 	poetry run black --check --diff .
 format:
 	poetry run black .
+
+# for end usage
+send-full-report:
+	poetry run python -m etl_homework.handy.send_test_email
+register-email-block:
+	poetry run prefect block register -m prefect_email
+export-to-local:
+	poetry run python -m etl_homework.handy.export_to_local_dir
