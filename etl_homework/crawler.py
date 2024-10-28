@@ -96,7 +96,7 @@ class BinanceAPICrawler:
         prices = self._get_kline(coin, currency, timeframe=timeframe, limit=limit)
         out_prices = []
         for price in prices:
-            start_timestamp = price[0]
+            start_timestamp = int(price[0])
             open_price = price[1]
             out_prices.append((start_timestamp, open_price))
         if not is_price_ts_valid(
