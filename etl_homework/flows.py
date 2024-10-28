@@ -1,7 +1,6 @@
 import time
 
 from prefect import flow, task, get_run_logger
-from prefect.transactions import transaction
 
 from etl_homework.crawler import BinanceAPICrawler, MemPoolAPICrawler, TimeFrames
 from etl_homework import models, dbs
