@@ -1,9 +1,14 @@
 from etl_homework import dbs
 from etl_homework import models
-from etl_homework.models import NetworkHashRate, CoinPrice, GeneratedData
 
-CRAWLER_TABLES = [models.NetworkDifficulty, NetworkHashRate, CoinPrice]
-GENERATED_DATA_TABLES = [GeneratedData]
+CRAWLER_TABLES = [
+    models.NetworkDifficulty,
+    models.NetworkHashRate,
+    models.CoinPrice,
+]
+GENERATED_DATA_TABLES = [
+    models.BTCUSDPriceWithNetStat,
+]
 
 
 def execute_migration():
