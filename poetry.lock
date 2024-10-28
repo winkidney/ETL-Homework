@@ -2194,13 +2194,13 @@ reference = "tuna"
 
 [[package]]
 name = "prefect"
-version = "3.0.10"
+version = "3.0.11"
 description = "Workflow orchestration and management."
 optional = false
 python-versions = ">=3.9"
 files = [
-    {file = "prefect-3.0.10-py3-none-any.whl", hash = "sha256:e1e4ae753657a749887e561158c1ee359c30f1e64837749b95aa6425d9194e4f"},
-    {file = "prefect-3.0.10.tar.gz", hash = "sha256:ee0d94d09b2d2771bfe4b65a4feaf41f61e73fe5e9994c05b71d4fd0e0befb77"},
+    {file = "prefect-3.0.11-py3-none-any.whl", hash = "sha256:09d27c94eb6f745767b5811e4900b9120212a75a44e53bb8186aea0bffa1120f"},
+    {file = "prefect-3.0.11.tar.gz", hash = "sha256:9969cabe8d10080441c1f6e80ce3019ff0f998eafe2da26fd214cf76eaf86e96"},
 ]
 
 [package.dependencies]
@@ -2235,11 +2235,12 @@ orjson = ">=3.7,<4.0"
 packaging = ">=21.3,<24.3"
 pathspec = ">=0.8.0"
 pendulum = ">=3.0.0,<4"
+prefect-email = {version = ">=0.4.0rc1", optional = true, markers = "extra == \"email\""}
 prometheus-client = ">=0.20.0"
 pydantic = ">=2.7,<3.0.0"
 pydantic-core = ">=2.12.0,<3.0.0"
 pydantic-extra-types = ">=2.8.2,<3.0.0"
-pydantic-settings = "*"
+pydantic-settings = ">2.2.1"
 python-dateutil = ">=2.8.2,<3.0.0"
 python-slugify = ">=5.0,<9.0"
 pytz = ">=2021.1,<2025"
@@ -2277,6 +2278,28 @@ shell = ["prefect-shell (>=0.3.0rc1)"]
 slack = ["prefect-slack (>=0.3.0rc1)"]
 snowflake = ["prefect-snowflake (>=0.28.0rc1)"]
 sqlalchemy = ["prefect-sqlalchemy (>=0.5.0rc1)"]
+
+[package.source]
+type = "legacy"
+url = "https://mirrors.tuna.tsinghua.edu.cn/pypi/web/simple"
+reference = "tuna"
+
+[[package]]
+name = "prefect-email"
+version = "0.4.0"
+description = "Prefect integrations for interacting with email."
+optional = false
+python-versions = ">=3.9"
+files = [
+    {file = "prefect_email-0.4.0-py3-none-any.whl", hash = "sha256:9550b292b8bc53e5457d940f50ce666e2203c701d35abe298e303b4267938f51"},
+    {file = "prefect_email-0.4.0.tar.gz", hash = "sha256:603e3666f205e3b111934fafe096fda1009e5c696534d422fe1a99145d97001f"},
+]
+
+[package.dependencies]
+prefect = ">=3.0.0rc1"
+
+[package.extras]
+dev = ["aiohttp", "coverage", "interrogate", "mkdocs", "mkdocs-gen-files", "mkdocs-material", "mkdocstrings[python]", "mypy", "pillow", "pre-commit", "pytest", "pytest-asyncio", "pytest-env", "pytest-xdist"]
 
 [package.source]
 type = "legacy"
@@ -4130,4 +4153,4 @@ reference = "tuna"
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.9"
-content-hash = "e4bf6ceba467e72f510a0b38abab75f5546c83bf2de651d6c7e65ae625306c97"
+content-hash = "eb1c20ea18b0d63bfa7cd121db46ac7efa7d5cdf566bc6d17ef3ec7a4ba6038e"
