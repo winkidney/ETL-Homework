@@ -1,12 +1,10 @@
 import time
 
 from prefect import flow, task, get_run_logger
-from prefect.events import emit_event
 
 from etl_homework.crawler import BinanceAPICrawler, MemPoolAPICrawler, TimeFrames
 from etl_homework import models, dbs
 from etl_homework.dbs import with_db
-from etl_homework.models import CoinPrice
 from etl_homework.transformers import CoinMetrics
 from etl_homework.utils.time import get_last_recent_n_minutes_timestamp
 
