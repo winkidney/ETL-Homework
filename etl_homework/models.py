@@ -47,3 +47,9 @@ class BTCUSDPriceWithNetStat(TimeSeries):
     class Meta:
         database = dbs.generated_db_proxy
         indexes = ((TimeSeries.UNIQUE_INDEX_FILES, True),)
+
+    def as_list(self, fields):
+        values = []
+        for field in fields:
+            values.append(getattr(self, field))
+        return values
