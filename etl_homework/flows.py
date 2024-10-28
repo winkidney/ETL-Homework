@@ -98,6 +98,7 @@ def transform_coin_network_status_and_price(
 @with_db
 def flow_update_btc_network_stats_and_price():
     with dbs.crawler_db_proxy.atomic():
+        # TODO(winkidney): concurrent execution for fetching task
         nd, nhr = task_fetch_current_btc_network_hash_rate_and_difficulty()
         price = task_fetch_current_coin_price(coin="BTC", currency="USD")
         transform_coin_network_status_and_price(price, nd, nhr)
