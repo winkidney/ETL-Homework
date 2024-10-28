@@ -1,12 +1,16 @@
+import os
 import time
+import dotenv
 
 from prefect import flow, task, get_run_logger
+from prefect_email import EmailServerCredentials, email_send_message
 
 from etl_homework.crawler import BinanceAPICrawler, MemPoolAPICrawler, TimeFrames
 from etl_homework import models, dbs
 from etl_homework.dbs import with_db
 from etl_homework.transformers import CoinMetrics
 from etl_homework.utils.time import get_last_recent_n_minutes_timestamp
+from etl_homework import exporters
 
 
 @flow(log_prints=True)
@@ -102,6 +106,43 @@ def flow_update_btc_network_stats_and_price():
         transform_coin_network_status_and_price(price, nd, nhr)
 
 
-@flow(log_prints=True, retries=10, retry_delay_seconds=5)
-def send_report_for_btc_network_stats_and_price():
-    pass
+def task_send_csv_report(csv_report: str):
+    """
+    :param csv_report: abs path of the report
+    """
+    dotenv.load_dotenv()
+    logger = get_run_logger()
+
+    email_server_credentials = EmailServerCredentials.load("kidney-gmail-sender")
+    target_emails = os.environ.get("REPORT_EMAIL_TARGETS")
+
+    if not target_emails:
+        logger.info("skip email sending since no email detected in OS-ENV")
+        return
+    target_emails = target_emails.split(",")
+
+    subjects = []
+    for email_address in target_emails:
+        title = "ETL Report of <BTC-Network-Status-and-Price>"
+        subject = email_send_message.with_options(
+            name=f"{title}: {email_address}"
+        ).submit(
+            email_server_credentials=email_server_credentials,
+            subject=title,
+            msg="this email contains the report for server",
+            email_to=email_address,
+            attachments=[csv_report],
+        )
+        subjects.append(subject)
+
+    for subject in subjects:
+        subject.wait()
+    return subjects
+
+
+@flow(log_prints=True, retries=2, retry_delay_seconds=5, timeout_seconds=10)
+@with_db
+def flow_send_full_report_for_btc_network_stats_and_price():
+    _, csv_report = exporters.CoinMetricsExporter.export()
+    task_send_csv_report(csv_report)
+    os.remove(csv_report)

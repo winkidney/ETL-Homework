@@ -19,7 +19,7 @@ def test_coin_price_fetch(prefect_unittest_conf, request, load_dotenv):
     assert ret.id is not None
     cp = models.CoinPrice.select().where(models.CoinPrice.id == ret.id).get()
     assert cp is not None
-    assert time.time() > cp.start_timestamp.timestamp() > 0, cp.start_timestamp
+    assert time.time() > cp.start_timestamp > 0, cp.start_timestamp
     assert cp.price > 0, cp.price
     assert models.CoinPrice.select().where(models.CoinPrice.id == ret.id).count() == 1
 
@@ -36,7 +36,7 @@ def test_btc_network_stats_update(prefect_unittest_conf):
     nhr = (
         models.NetworkHashRate.select().where(models.NetworkHashRate.id == nhr.id).get()
     )
-    assert time.time() > nd.start_timestamp.timestamp() > 0, nd.start_timestamp
-    assert time.time() > nhr.start_timestamp.timestamp() > 0, nd.start_timestamp
+    assert time.time() > nd.start_timestamp > 0, nd.start_timestamp
+    assert time.time() > nhr.start_timestamp > 0, nd.start_timestamp
     assert nd.difficulty > 0, nd.difficulty
     assert nhr.hash_rate > 0, nhr.hash_rate

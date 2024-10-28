@@ -1,4 +1,4 @@
-from peewee import CharField, TimestampField, FloatField, Model
+from peewee import CharField, TimestampField, FloatField, Model, BigIntegerField
 from playhouse.postgres_ext import JSONField
 
 from etl_homework import dbs
@@ -8,7 +8,7 @@ class TimeSeries(Model):
     UNIQUE_INDEX_FILES = ("timeframe", "start_timestamp")
 
     timeframe = CharField(max_length=32, default="5m")
-    start_timestamp = TimestampField(resolution=1)  # second as resolution
+    start_timestamp = BigIntegerField()  # second as resolution
 
 
 class NetworkDifficulty(TimeSeries):

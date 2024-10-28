@@ -35,14 +35,19 @@ def initial_metric(database, request):
 class TestCoinMetrics:
 
     def test_should_export_full_csv_file(self, initial_metric):
-        csv_name, csv_file = exporters.CoinMetricsExporter.export()
+        csv_name, file_path = exporters.CoinMetricsExporter.export()
+        with open(file_path, "r", encoding="utf-8") as csv_file:
+            reader = csv.reader(csv_file)
+            all_data = list(reader)
+            assert len(all_data) == len(initial_metric) + 1, all_data
+            ts1 = all_data[1][1]  # first line
+            ts2 = all_data[-1][1]  # last line
+            assert ts2 > ts1
 
-        reader = csv.reader(csv_file)
-        all_data = list(reader)
-        assert len(all_data) == len(initial_metric) + 1, all_data
-        ts1 = all_data[1][1]  # first line
-        ts2 = all_data[-1][1]  # last line
-        assert ts2 > ts1
+            try:
+                int(all_data[1][1])
+            except ValueError:
+                assert False, (type(all_data[1][1]), all_data[1][1])
 
     @pytest.mark.parametrize(
         "offset_seconds, num_bars",
@@ -56,15 +61,16 @@ class TestCoinMetrics:
         self, initial_metric, offset_seconds, num_bars
     ):
         start_ts = initial_metric[0]["start_timestamp"]
-        _, csv_file = exporters.CoinMetricsExporter.export(
+        csv_name, file_path = exporters.CoinMetricsExporter.export(
             start_timestamp=start_ts + offset_seconds
         )
-        reader = csv.reader(csv_file)
-        all_data = list(reader)
-        assert len(all_data) - 1 == num_bars, all_data
-        ts1 = all_data[1][1]  # first line
-        ts2 = all_data[-1][1]  # last line
-        assert ts2 > ts1
+        with open(file_path, "r", encoding="utf-8") as csv_file:
+            reader = csv.reader(csv_file)
+            all_data = list(reader)
+            assert len(all_data) - 1 == num_bars, all_data
+            ts1 = all_data[1][1]  # first line
+            ts2 = all_data[-1][1]  # last line
+            assert ts2 > ts1
 
     @pytest.mark.parametrize(
         "offset_seconds, num_bars",
@@ -78,15 +84,16 @@ class TestCoinMetrics:
         self, initial_metric, offset_seconds, num_bars
     ):
         start_ts = initial_metric[-1]["start_timestamp"]
-        _, csv_file = exporters.CoinMetricsExporter.export(
+        csv_name, file_path = exporters.CoinMetricsExporter.export(
             end_timestamp=start_ts + offset_seconds
         )
-        reader = csv.reader(csv_file)
-        all_data = list(reader)
-        assert len(all_data) - 1 == num_bars, all_data
-        ts1 = all_data[1][1]  # first line
-        ts2 = all_data[-1][1]  # last line
-        assert ts2 > ts1
+        with open(file_path, "r", encoding="utf-8") as csv_file:
+            reader = csv.reader(csv_file)
+            all_data = list(reader)
+            assert len(all_data) - 1 == num_bars, all_data
+            ts1 = all_data[1][1]  # first line
+            ts2 = all_data[-1][1]  # last line
+            assert ts2 > ts1
 
     @pytest.mark.parametrize(
         "start_offset_seconds, end_offset_seconds, num_bars", ((1, -1, 8),)
@@ -96,13 +103,14 @@ class TestCoinMetrics:
     ):
         start_ts = initial_metric[0]["start_timestamp"]
         end_ts = initial_metric[-1]["start_timestamp"]
-        _, csv_file = exporters.CoinMetricsExporter.export(
+        csv_name, file_path = exporters.CoinMetricsExporter.export(
             start_timestamp=start_ts + start_offset_seconds,
             end_timestamp=end_ts + end_offset_seconds,
         )
-        reader = csv.reader(csv_file)
-        all_data = list(reader)
-        assert len(all_data) - 1 == num_bars, all_data
-        ts1 = all_data[1][1]  # first line
-        ts2 = all_data[-1][1]  # last line
-        assert ts2 > ts1
+        with open(file_path, "r", encoding="utf-8") as csv_file:
+            reader = csv.reader(csv_file)
+            all_data = list(reader)
+            assert len(all_data) - 1 == num_bars, all_data
+            ts1 = all_data[1][1]  # first line
+            ts2 = all_data[-1][1]  # last line
+            assert ts2 > ts1
