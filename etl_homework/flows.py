@@ -100,3 +100,8 @@ def flow_update_btc_network_stats_and_price():
         nd, nhr = task_fetch_current_btc_network_hash_rate_and_difficulty()
         price = task_fetch_current_coin_price(coin="BTC", currency="USD")
         transform_coin_network_status_and_price(price, nd, nhr)
+
+
+@flow(log_prints=True, retries=10, retry_delay_seconds=5)
+def send_report_for_btc_network_stats_and_price():
+    pass

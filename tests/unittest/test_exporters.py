@@ -35,14 +35,14 @@ def initial_metric(database, request):
 class TestCoinMetrics:
 
     def test_should_export_full_csv_file(self, initial_metric):
-        csv_name = exporters.CoinMetricsExporter.export()
-        with open(csv_name, mode="r", encoding="utf-8") as file:
-            reader = csv.reader(file)
-            all_data = list(reader)
-            assert len(all_data) == len(initial_metric) + 1, all_data
-            ts1 = all_data[1][1]  # first line
-            ts2 = all_data[-1][1]  # last line
-            assert ts2 > ts1
+        csv_name, csv_file = exporters.CoinMetricsExporter.export()
+
+        reader = csv.reader(csv_file)
+        all_data = list(reader)
+        assert len(all_data) == len(initial_metric) + 1, all_data
+        ts1 = all_data[1][1]  # first line
+        ts2 = all_data[-1][1]  # last line
+        assert ts2 > ts1
 
     @pytest.mark.parametrize(
         "offset_seconds, num_bars",
@@ -56,16 +56,15 @@ class TestCoinMetrics:
         self, initial_metric, offset_seconds, num_bars
     ):
         start_ts = initial_metric[0]["start_timestamp"]
-        csv_name = exporters.CoinMetricsExporter.export(
+        _, csv_file = exporters.CoinMetricsExporter.export(
             start_timestamp=start_ts + offset_seconds
         )
-        with open(csv_name, mode="r", encoding="utf-8") as file:
-            reader = csv.reader(file)
-            all_data = list(reader)
-            assert len(all_data) - 1 == num_bars, all_data
-            ts1 = all_data[1][1]  # first line
-            ts2 = all_data[-1][1]  # last line
-            assert ts2 > ts1
+        reader = csv.reader(csv_file)
+        all_data = list(reader)
+        assert len(all_data) - 1 == num_bars, all_data
+        ts1 = all_data[1][1]  # first line
+        ts2 = all_data[-1][1]  # last line
+        assert ts2 > ts1
 
     @pytest.mark.parametrize(
         "offset_seconds, num_bars",
@@ -79,16 +78,15 @@ class TestCoinMetrics:
         self, initial_metric, offset_seconds, num_bars
     ):
         start_ts = initial_metric[-1]["start_timestamp"]
-        csv_name = exporters.CoinMetricsExporter.export(
+        _, csv_file = exporters.CoinMetricsExporter.export(
             end_timestamp=start_ts + offset_seconds
         )
-        with open(csv_name, mode="r", encoding="utf-8") as file:
-            reader = csv.reader(file)
-            all_data = list(reader)
-            assert len(all_data) - 1 == num_bars, all_data
-            ts1 = all_data[1][1]  # first line
-            ts2 = all_data[-1][1]  # last line
-            assert ts2 > ts1
+        reader = csv.reader(csv_file)
+        all_data = list(reader)
+        assert len(all_data) - 1 == num_bars, all_data
+        ts1 = all_data[1][1]  # first line
+        ts2 = all_data[-1][1]  # last line
+        assert ts2 > ts1
 
     @pytest.mark.parametrize(
         "start_offset_seconds, end_offset_seconds, num_bars", ((1, -1, 8),)
@@ -98,14 +96,13 @@ class TestCoinMetrics:
     ):
         start_ts = initial_metric[0]["start_timestamp"]
         end_ts = initial_metric[-1]["start_timestamp"]
-        csv_name = exporters.CoinMetricsExporter.export(
+        _, csv_file = exporters.CoinMetricsExporter.export(
             start_timestamp=start_ts + start_offset_seconds,
             end_timestamp=end_ts + end_offset_seconds,
         )
-        with open(csv_name, mode="r", encoding="utf-8") as file:
-            reader = csv.reader(file)
-            all_data = list(reader)
-            assert len(all_data) - 1 == num_bars, all_data
-            ts1 = all_data[1][1]  # first line
-            ts2 = all_data[-1][1]  # last line
-            assert ts2 > ts1
+        reader = csv.reader(csv_file)
+        all_data = list(reader)
+        assert len(all_data) - 1 == num_bars, all_data
+        ts1 = all_data[1][1]  # first line
+        ts2 = all_data[-1][1]  # last line
+        assert ts2 > ts1
