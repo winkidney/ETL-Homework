@@ -2,7 +2,7 @@ import numpy as np
 import pandas as pd
 
 from etl_homework import models
-from etl_homework.crawler import TimeFrames
+from etl_homework.constants import TimeFrames
 from etl_homework.utils.time import get_last_recent_n_minutes_timestamp
 
 

@@ -36,12 +36,17 @@ class TestMemPoolCrawler:
 
     def test_should_return_historic_hash_rate(self, mempool_client):
         historic_hash_rate = mempool_client.get_historic_hash_rate()
-        assert len(historic_hash_rate) == 30, historic_hash_rate
+        total_len = len(historic_hash_rate)
+        # TODO(winkidney): use better strategy to detect if the total len is valid
+        assert total_len > 6000, historic_hash_rate
+        assert isinstance(historic_hash_rate, tuple)
+        assert len(historic_hash_rate[0]) == 2
 
     def test_should_return_historic_difficulty(self, mempool_client):
         historic_difficulty = mempool_client.get_historic_difficulty()
+        # TODO(winkidney): use better strategy to detect if the total len is valid
         assert len(historic_difficulty) > 0, historic_difficulty
-        assert len(historic_difficulty[0]) == 4, historic_difficulty
+        assert len(historic_difficulty[0]) == 2, historic_difficulty[0]
 
     def test_should_return_current_hash_rate_and_difficulty(self, mempool_client):
         hash_rate, difficulty = mempool_client.get_current_hash_rate_difficulty()

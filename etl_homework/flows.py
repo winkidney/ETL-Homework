@@ -140,6 +140,14 @@ def task_send_csv_report(csv_report: str):
     return subjects
 
 
+@task(name="bootstrap-to-fetch-history-data")
+def bootstrap():
+    """
+    load initial data from network crawlers
+    """
+    pass
+
+
 @flow(log_prints=True, retries=2, retry_delay_seconds=5, timeout_seconds=10)
 @with_db
 def flow_send_full_report_for_btc_network_stats_and_price():
