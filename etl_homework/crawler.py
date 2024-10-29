@@ -39,6 +39,8 @@ def is_price_ts_valid(req_ts: int, last_price_ts, num_minutes):
 
 
 class BinanceAPICrawler:
+    NUM_MAX_KLINE_CANDLES = 1500
+
     _s = requests.session()
     _base_url = "https://api.binance.com"
 
@@ -84,6 +86,9 @@ class BinanceAPICrawler:
         timeframe=TimeFrames.FIVE_MINUTES,
         limit: int = None,
     ):
+        """
+        :return: list like ((timestamp, price_at_timestamp), )
+        """
         req_ts = int(time.time())
         prices = self._get_kline(coin, currency, timeframe=timeframe, limit=limit)
         out_prices = []
@@ -189,7 +194,7 @@ class MemPoolAPICrawler:
           "currentHashrate": 713196680878333900000,
           "currentDifficulty": 95672703408223.94
         }
-        :return: [(start_timestamp, hash_rate), ]
+        :return: tuple like ((start_timestamp, hash_rate), )
         """
         # TODO(winkidney): use other data source instead of interpolating data ourselves
         minutes = TimeFrames.to_int(timeframe)
@@ -223,7 +228,7 @@ class MemPoolAPICrawler:
         :param raw_difficulty:
         :param current_difficulty:
         :param timeframe: 1m
-        :return:
+        :return: tuple like ((timestamp, value), )
         """
         # TODO(winkidney): use other data source instead of interpolating data ourselves
         minutes = TimeFrames.to_int(timeframe)
