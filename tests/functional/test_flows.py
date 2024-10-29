@@ -42,7 +42,12 @@ def test_btc_network_stats_update(prefect_unittest_conf):
     assert nhr.hash_rate > 0, nhr.hash_rate
 
 
-def test_should_code_start_insert_correct_data(prefect_unittest_conf):
+def test_should_code_start_insert_correct_data(
+    prefect_unittest_conf, load_dotenv, request
+):
+    if not load_dotenv:
+        mark = pytest.mark.xfail(reason="binance may not used in US area")
+        request.node.add_marker(mark)
     history_price, history_difficulty, history_hash_rate = (
         flows.task_btc_network_stats_and_price_bootstrap()
     )
