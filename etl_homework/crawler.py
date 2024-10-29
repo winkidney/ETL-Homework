@@ -7,6 +7,8 @@ import dotenv
 import requests
 import ccxt
 
+from etl_homework.constants import TimeFrames
+from etl_homework.transformers import generate_tf_indexes, interpolate_data
 from etl_homework.utils.time import get_last_recent_n_minutes_timestamp
 
 
@@ -14,23 +16,13 @@ class RequestFailed(ValueError):
     pass
 
 
-class TimeFrames:
-    FIVE_MINUTES = "5m"
-
-    _str2minutes = {
-        FIVE_MINUTES: 5,
-    }
-
-    @classmethod
-    def to_int(cls, minutes: str) -> int:
-        return cls._str2minutes[minutes]
-
-
 class MemPoolPeriod:
     ONE_MONTH = "1m"
+    THREE_DAYS = "1m"
 
     _str2minutes = {
         "1m": 60 * 24 * 30,
+        "3d": 60 * 24 * 3,
     }
 
     @classmethod
@@ -47,6 +39,8 @@ def is_price_ts_valid(req_ts: int, last_price_ts, num_minutes):
 
 
 class BinanceAPICrawler:
+    NUM_MAX_KLINE_CANDLES = 1500
+
     _s = requests.session()
     _base_url = "https://api.binance.com"
 
@@ -92,6 +86,9 @@ class BinanceAPICrawler:
         timeframe=TimeFrames.FIVE_MINUTES,
         limit: int = None,
     ):
+        """
+        :return: list like ((timestamp, price_at_timestamp), )
+        """
         req_ts = int(time.time())
         prices = self._get_kline(coin, currency, timeframe=timeframe, limit=limit)
         out_prices = []
@@ -137,11 +134,26 @@ class MemPoolAPICrawler:
             raise RequestFailed(error_msg)
         return resp.json()
 
-    def _get_historic_difficulty(self, period: str = MemPoolPeriod.ONE_MONTH) -> list:
+    def _get_historic_difficulty(self, period: str = MemPoolPeriod.THREE_DAYS) -> list:
         """
         Ref: https://mempool.space/docs/api/rest#get-difficulty-adjustments
         :param period: 1m, 3m, 6m, 1y, 2y, 3y
-        :return: difficulty in given periods
+        :return: difficulty in given periods, the data is just like:
+            [
+              [
+                1729620301,
+                866880,
+                95672703408223.94,
+                1.03936
+              ],
+              [
+                1728456399,
+                864864,
+                92049594548485.48,
+                1.04123
+              ]
+            ]
+            with elements [Block timestamp, Block height, Difficulty, Difficulty change]
         """
         if not MemPoolPeriod.is_valid(period):
             raise ValueError(f"invalid period: {period}")
@@ -156,28 +168,105 @@ class MemPoolAPICrawler:
             raise RequestFailed(error_msg)
         return resp.json()
 
-    def normalize_hash_rate_history(cls, hash_rates: list) -> list:
+    @classmethod
+    def normalize_hash_rate_history(
+        cls, raw_hash_rates: dict, timeframe=TimeFrames.FIVE_MINUTES
+    ) -> tuple:
+        """
+        :param raw_hash_rates: the data is just like:
+        :param timeframe: 1m, 3m, 6m, 1y, 2y, 3y
+        {
+          "hashrates": [
+            {
+              "timestamp": 1729900800,
+              "avgHashrate": 736575040256689400000
+            },
+            {
+              "timestamp": 1729987200,
+              "avgHashrate": 686029213440536600000
+            },
+            {
+              "timestamp": 1730073600,
+              "avgHashrate": 766343891160459100000
+            }
+          ],
+          "difficulty": [],
+          "currentHashrate": 713196680878333900000,
+          "currentDifficulty": 95672703408223.94
+        }
+        :return: tuple like ((start_timestamp, hash_rate), )
+        """
         # TODO(winkidney): use other data source instead of interpolating data ourselves
-        # TODO(winkidney): implementation
-        return hash_rates
+        minutes = TimeFrames.to_int(timeframe)
+        hash_rates = sorted(raw_hash_rates["hashrates"], key=lambda x: x["timestamp"])
+        hash_rates.append(
+            {
+                "timestamp": int(time.time()),
+                "avgHashrate": raw_hash_rates["currentHashrate"],
+            }
+        )
+        valid_ts = [
+            get_last_recent_n_minutes_timestamp(data["timestamp"], minutes)
+            for data in hash_rates
+        ]
+        valid_data = [data["avgHashrate"] for data in hash_rates]
+        larger_range_ts = valid_ts[-1] + 1  # which includes the last timestamp within
+        start_ts = valid_ts[0]
+        index2interpolate = generate_tf_indexes(
+            start_ts, larger_range_ts, time_frame=timeframe
+        )
+        interpolated = interpolate_data(
+            index2interpolate, valid_ts, valid_data, force_int=True
+        )
+        return tuple(zip(index2interpolate, interpolated))
 
     @classmethod
-    def normalize_difficulty_history(cls, difficulty: list) -> list:
+    def normalize_difficulty_history(
+        cls, raw_difficulty: list, timeframe=TimeFrames.FIVE_MINUTES
+    ) -> tuple:
+        """
+        :param raw_difficulty:
+        :param current_difficulty:
+        :param timeframe: 1m
+        :return: tuple like ((timestamp, value), )
+        """
         # TODO(winkidney): use other data source instead of interpolating data ourselves
-        # TODO(winkidney): implementation
-        return difficulty
+        minutes = TimeFrames.to_int(timeframe)
+        difficulties = [(dft[0], dft[2]) for dft in raw_difficulty]
+        difficulties = sorted(difficulties, key=lambda x: x[0])
+        # current
+        difficulties.append((int(time.time()), difficulties[-1][1]))
+        valid_ts = [
+            get_last_recent_n_minutes_timestamp(data[0], minutes)
+            for data in difficulties
+        ]
+        valid_data = [data[1] for data in difficulties]
+        larger_range_ts = valid_ts[-1] + 1  # which includes the last timestamp within
+        start_ts = valid_ts[0]
+        index2interpolate = generate_tf_indexes(
+            start_ts, larger_range_ts, time_frame=timeframe
+        )
+        interpolated = interpolate_data(
+            index2interpolate, valid_ts, valid_data, force_int=True
+        )
+        return tuple(zip(index2interpolate, interpolated))
 
-    def get_historic_hash_rate(self, period: str = MemPoolPeriod.ONE_MONTH):
+    def get_historic_hash_rate(
+        self, period: str = MemPoolPeriod.ONE_MONTH, timeframe=TimeFrames.FIVE_MINUTES
+    ):
         raw_hash_rate_data = self._get_hash_rate(period)
-        hash_rate_history = raw_hash_rate_data["hashrates"]
-        return self.normalize_hash_rate_history(hash_rate_history)
+        return self.normalize_hash_rate_history(raw_hash_rate_data, timeframe=timeframe)
 
-    def get_historic_difficulty(self, period: str = MemPoolPeriod.ONE_MONTH):
+    def get_historic_difficulty(
+        self, period: str = MemPoolPeriod.THREE_DAYS, timeframe=TimeFrames.FIVE_MINUTES
+    ):
         raw_difficulty_data = self._get_historic_difficulty(period)
-        return self.normalize_difficulty_history(raw_difficulty_data)
+        return self.normalize_difficulty_history(
+            raw_difficulty_data, timeframe=timeframe
+        )
 
     def get_current_hash_rate_difficulty(self):
-        raw_difficulty_data = self._get_hash_rate(MemPoolPeriod.ONE_MONTH)
+        raw_difficulty_data = self._get_hash_rate(MemPoolPeriod.THREE_DAYS)
         hash_rate = raw_difficulty_data["currentHashrate"]
         difficulty = raw_difficulty_data["currentDifficulty"]
         return hash_rate, difficulty

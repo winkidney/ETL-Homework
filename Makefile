@@ -9,6 +9,7 @@ switch2local:
 switch2cloud:
 	poetry run prefect cloud login
 local-task:
+	poetry run python -m etl_homework.handy.cold_start
 	poetry run python -m etl_homework.serve
 functional-test:
 	poetry run pytest tests/functional -vv
