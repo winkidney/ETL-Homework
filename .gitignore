@@ -1,3 +1,9 @@
+# local docker config
+docker-compose.yml
+
+# prefect docker config
+.prefect
+
 # local csv
 /*.csv
 
