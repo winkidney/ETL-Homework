@@ -14,15 +14,6 @@ from etl_homework.utils.time import get_last_recent_n_minutes_timestamp
 from etl_homework import exporters
 
 
-@flow(log_prints=True)
-def hello_world(name: str = "world", goodbye: bool = False):
-    print(f"Hello {name} from Prefect! 🤗")
-
-    if goodbye:
-        print(f"Goodbye {name}!")
-    return 0
-
-
 @task(name="get-btc-price", task_run_name="get-btc-price-in-{coin}/{currency}")
 def task_fetch_current_coin_price(coin: str, currency: str):
     logger = get_run_logger()
