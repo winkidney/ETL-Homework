@@ -231,6 +231,12 @@ def task_btc_network_stats_and_price_bootstrap():
     return history_price, history_difficulty, history_hash_rate
 
 
+@flow(log_prints=True, retries=10, retry_delay_seconds=5, timeout_seconds=50)
+@with_db
+def flow_cold_start():
+    task_btc_network_stats_and_price_bootstrap()
+
+
 @flow(log_prints=True, retries=2, retry_delay_seconds=5, timeout_seconds=10)
 @with_db
 def flow_send_full_report_for_btc_network_stats_and_price():
