@@ -1,0 +1,59 @@
+version: '3.6'
+services:
+  consumer:
+    image: ubuntu:20.04-with-ca-python3.9
+    build: .
+    hostname: etl-consumer
+    container_name: etl-consumer
+    working_dir: /projects/
+    command: make local-task
+    volumes:
+      - "./:/projects"
+      - "./.prefect:/root/.prefect"
+      # for local time
+      - "/etc/timezone:/etc/timezone:ro"
+      - "/etc/localtime:/etc/localtime:ro"
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "1024m"
+    restart: always
+    tty: true
+  bootstrap:
+    image: ubuntu:20.04-with-ca-python3.9
+    build: .
+    hostname: etl-bootstrap
+    container_name: etl-bootstrap
+    working_dir: /projects/
+    command: make sync-db switch2cloud register-email-block
+    volumes:
+      - "./:/projects"
+      - "./.prefect:/root/.prefect"
+      # for local time
+      - "/etc/timezone:/etc/timezone:ro"
+      - "/etc/localtime:/etc/localtime:ro"
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "1024m"
+    restart: "no"
+    tty: true
+  export-report:
+    image: ubuntu:20.04-with-ca-python3.9
+    build: .
+    hostname: etl-bootstrap
+    container_name: etl-bootstrap
+    working_dir: /projects/
+    command: make export-to-local
+    volumes:
+      - "./:/projects"
+      - "./.prefect:/root/.prefect"
+      # for local time
+      - "/etc/timezone:/etc/timezone:ro"
+      - "/etc/localtime:/etc/localtime:ro"
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "1024m"
+    restart: "no"
+    tty: true

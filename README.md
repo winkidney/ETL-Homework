@@ -34,6 +34,7 @@ Classic tools like `Kafka`, `Hive`, `Elasticsearch` and `Spark` is also availabl
 + [ ] Full history API crawler for full-history-detail
 + [ ] Visualize of DAG flow
 + [ ] Classic BigData tools support
++ [ ] Production-ready docker configuration
 
 # Core Design Principles
 For new products, the ultimate goal is to quickly and lightly launch the business itself.
@@ -41,6 +42,32 @@ My design is always follow the rules below:
 + `Design More, Write Less`: It helps us save time and money. 
 + `Write code that is easy to delete, not easy to extend`: Embrace change, adapt to change, and iterate quickly.
 + `Write Tests, Gain Courage`: Only better tests can make you iterate quickly. 
+
+# Simple Usage with Docker
+You can use docker-compose to simplify env configuration.
+**Note**: This docker-compose file is not ready for production, it is just for simplify the process we bootstrap the project. 
+
+You may first have docker installed, and then:
+```shell
+# copy file or edit the configurations
+cp docker-compose.example.yml docker-compose.yml
+# bootstrap, in this step you should first register an account
+# on prefect.io and create an API key in user control panel.
+# Please open `Prefect Dashboard-> default -> API keys -> create one`
+# and then paste the API-Key below
+docker-compose run bootstrap
+# start local task
+docker-compose up consumer
+# in another terminal
+docker-compose run export-report
+# You will get:
+# Creating etl-homework_export-report_run ... done
+# poetry run python -m etl_homework.handy.export_to_local_dir
+# exported to:  coin_metrics_2024-10-29T16-29-15.253090.csv
+```
+
+**Note2**: You could run any command in `Development` part by attach to docker container.
+**Note3**: If binance API report error, please config `ETL_HTTP_PROXY` and `ETL_HTTPS_PROXY` in `.env` file.
 
 # Development
 
