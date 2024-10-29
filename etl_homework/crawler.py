@@ -232,7 +232,7 @@ class MemPoolAPICrawler:
         """
         # TODO(winkidney): use other data source instead of interpolating data ourselves
         minutes = TimeFrames.to_int(timeframe)
-        difficulties = [(dft[0], dft[3]) for dft in raw_difficulty]
+        difficulties = [(dft[0], dft[2]) for dft in raw_difficulty]
         difficulties = sorted(difficulties, key=lambda x: x[0])
         # current
         difficulties.append((int(time.time()), difficulties[-1][1]))
