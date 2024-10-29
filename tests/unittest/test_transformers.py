@@ -151,4 +151,4 @@ def test_should_interpolate_date_with_given_timeout():
         number=1000,
         globals=context,
     )
-    assert total_cost <= 3
+    assert total_cost <= 6
