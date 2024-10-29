@@ -52,10 +52,6 @@ def task_fetch_current_btc_network_hash_rate_and_difficulty():
     hash_rate, difficulty = client.get_current_hash_rate_difficulty()
     recent_timestamp = get_last_recent_n_minutes_timestamp(int(time.time()), minutes=5)
 
-    models.NetworkDifficulty.select("id").where(
-        models.NetworkDifficulty.start_timestamp == recent_timestamp,
-        models.NetworkDifficulty.timeframe == TimeFrames.FIVE_MINUTES,
-    )
     nd, nd_created = models.NetworkDifficulty.get_or_create(
         network="BTC",
         start_timestamp=recent_timestamp,
@@ -145,7 +141,6 @@ def bootstrap():
     """
     load initial data from network crawlers
     """
-    pass
 
 
 @flow(log_prints=True, retries=2, retry_delay_seconds=5, timeout_seconds=10)
