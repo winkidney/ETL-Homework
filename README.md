@@ -14,6 +14,27 @@ We could take much advantage from following features:
 We could easily start our data ETL flow, and scale to complex workflow.
 Classic tools like `Kafka`, `Hive`, `Elasticsearch` and `Spark` is also available in prefect workflow.
 
+# Core Features
+## Features Done This Version
++ [x] E: Extract data by API crawler 
+  + [x] Cold start with history data
+  + [x] Three types of data crawler: hash-rate, price, network-difficulty 
++ [x] T: Transform
+  + [x] Transform data and make new data table in specified 
++ [x] L: Load data
+  + [x] Database storage for Load feature (for example DuckDB)
+  + [x] CSV file output for other OLAP
++ [x] Monitoring
+  + [x] Email alert for task error
++ [x] Extra: auto report with email
+
+## TODO
++ [ ] Auto data correction for possible bad data
++ [ ] Deployment features on cloud or other methods
++ [ ] Full history API crawler for full-history-detail
++ [ ] Visualize of DAG flow
++ [ ] Classic BigData tools support
+
 # Core Design Principles
 For new products, the ultimate goal is to quickly and lightly launch the business itself.
 My design is always follow the rules below:
