@@ -34,6 +34,7 @@ Classic tools like `Kafka`, `Hive`, `Elasticsearch` and `Spark` is also availabl
 + [ ] Full history API crawler for full-history-detail
 + [ ] Visualize of DAG flow
 + [ ] Classic BigData tools support
++ [ ] Production-ready docker configuration
 
 # Core Design Principles
 For new products, the ultimate goal is to quickly and lightly launch the business itself.
