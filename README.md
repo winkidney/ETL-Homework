@@ -67,6 +67,7 @@ docker-compose run export-report
 ```
 
 **Note2**: You could run any command in `Development` part by attach to docker container.
+**Note3**: If binance API report error, please config `ETL_HTTP_PROXY` and `ETL_HTTPS_PROXY` in `.env` file.
 
 # Development
 
